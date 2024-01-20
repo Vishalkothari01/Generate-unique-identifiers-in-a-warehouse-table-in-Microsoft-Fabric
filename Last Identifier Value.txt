@@ -1,0 +1,8 @@
+--Assign the last identifier value to a variable
+--If the table doesn't contain any rows, assign zero to the variable
+DECLARE @MaxID AS BIGINT;
+
+IF EXISTS(SELECT * FROM [dbo].[Orders_with_Identifier])
+    SET @MaxID = (SELECT MAX([Row_ID]) FROM [dbo].[Orders_with_Identifier]);
+ELSE
+    SET @MaxID = 0;
