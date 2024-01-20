@@ -1,0 +1,44 @@
+-- Create a staging table
+IF OBJECT_ID('[dbo].[Staging_Orders]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Staging_Orders];
+GO
+
+CREATE TABLE [dbo].[Staging_Orders] (
+    [O_OrderKey] BIGINT NULL,
+    [O_CustomerKey] BIGINT NULL,
+    [O_OrderStatus] VARCHAR(1) NULL,
+    [O_TotalPrice] DECIMAL(15, 2) NULL,
+    [O_OrderDate] DATE NULL,
+    [O_OrderPriority] VARCHAR(15) NULL,
+    [O_Clerk] VARCHAR (15) NULL,
+    [O_ShipPriority] INT NULL,
+    [O_Comment] VARCHAR (79) NULL
+);
+GO
+
+-- Bulk insert into the staging table
+BULK INSERT [dbo].[Staging_Orders]
+FROM 'your_file_path.csv'
+WITH
+(
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n',
+    TABLOCK
+);
+
+-- Insert from staging to the main table with unique Row_ID
+INSERT INTO [dbo].[Orders_with_Identifier]
+SELECT
+    @MaxID + ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS [Row_ID],
+    [src].[O_OrderKey],
+    [src].[O_CustomerKey],
+    [src].[O_OrderStatus],
+    [src].[O_TotalPrice],
+    [src].[O_OrderDate],
+    [src].[O_OrderPriority],
+    [src].[O_Clerk],
+    [src].[O_ShipPriority],
+    [src].[O_Comment]
+FROM [dbo].[Staging_Orders] AS [src];
+
+COMMIT TRANSACTION;

@@ -1,0 +1,18 @@
+-- Create a table named 'Orders_with_Identifier' in schema 'dbo'
+IF OBJECT_ID('[dbo].[Orders_with_Identifier]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Orders_with_Identifier];
+GO
+
+CREATE TABLE [dbo].[Orders_with_Identifier] (
+    [Row_ID] BIGINT NOT NULL,
+    [O_OrderKey] BIGINT NULL,
+    [O_CustomerKey] BIGINT NULL,
+    [O_OrderStatus] VARCHAR(1) NULL,
+    [O_TotalPrice] DECIMAL(15, 2) NULL,
+    [O_OrderDate] DATE NULL,
+    [O_OrderPriority] VARCHAR(15) NULL,
+    [O_Clerk] VARCHAR (15) NULL,
+    [O_ShipPriority] INT NULL,
+    [O_Comment] VARCHAR (79) NULL
+);
+GO
